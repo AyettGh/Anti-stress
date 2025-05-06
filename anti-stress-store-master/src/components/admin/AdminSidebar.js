@@ -22,14 +22,16 @@ const AdminSidebar = () => {
             🛠️ Gérer les produits
           </Link>
         </li>
-        <li>
-          <Link to="/admin/manage-users" className="block hover:text-blue-600">
-            👥 Gérer les utilisateurs
-          </Link>
-        </li>
+       
       </ul>
     </div>
   );
 };
 
 export default AdminSidebar;
+
+
+
+
+
+

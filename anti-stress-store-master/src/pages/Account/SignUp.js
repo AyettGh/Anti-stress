@@ -98,7 +98,7 @@ const SignUp = () => {
             </p>
             <Link to="/signin">
               <button className="w-full h-10 bg-primeColor rounded-md text-gray-200 text-base font-titleFont font-semibold tracking-wide hover:bg-black hover:text-white duration-300">
-                Sign in
+              Login
               </button>
             </Link>
           </div>
@@ -186,7 +186,7 @@ const SignUp = () => {
                 <p className="text-sm text-center font-titleFont font-medium">
                   Don't have an Account?{" "}
                   <Link to="/signin">
-                    <span className="hover:text-blue-600 duration-300">Sign in</span>
+                    <span className="hover:text-blue-600 duration-300">Login</span>
                   </Link>
                 </p>
               </div>

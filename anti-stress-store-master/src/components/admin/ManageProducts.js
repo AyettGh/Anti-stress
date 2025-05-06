@@ -1,22 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { Table, Button, Container, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
+import { FaEdit, FaTrashAlt } from "react-icons/fa"; // FontAwesome
+
 
 const ManageProducts = () => {
   const [products, setProducts] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetch("http://localhost:8089/ecommerce/allproduct") // Ton endpoint API
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json(); // Tente de parser la réponse JSON
+    fetch("http://localhost:8089/ecommerce/allproduct")
+      .then((res) => res.json())
+      .then(async (data) => {
+        // Appeler /productimage/{id} pour chaque produit
+        const productsWithImages = await Promise.all(
+          data.map(async (product) => {
+            const imgRes = await fetch(`http://localhost:8089/ecommerce/productimage/${product.id}`);
+            const base64 = await imgRes.text();
+            return { ...product, imageUrl: `data:image/jpeg;base64,${base64}` };
+          })
+        );
+        setProducts(productsWithImages);
       })
-      .then((data) => setProducts(data))
-      .catch((error) => setError(error.message)); // Gérer les erreurs
+      .catch((err) => setError(err.message));
   }, []);
+  
+
+
 
   const handleDelete = (id) => {
     if (window.confirm("Êtes-vous sûr de vouloir supprimer ce produit ?")) {
@@ -59,31 +69,32 @@ const ManageProducts = () => {
           {products.map((product) => (
             <tr key={product._id}>
               <td>
-                <img src={product.image} alt={product.name} width="100" />
+              <img src={product.imageUrl} alt={product.name} width="50" />
               </td>
               <td>{product.name}</td>
               <td>{product.price} D</td>
               <td>
-                <Row className="g-1">
-                  <Col xs={6}>
-                    <Link to={`/admin/edit-product/${product.id}`}>
-                      <Button variant="success" size="sm" className="w-100 py-1 px-2">
-                        Modifier
+                  <Row className="g-1 justify-content-center">
+                    <Col xs="auto">
+                      <Link to={`/admin/edit-product/${product.id}`}>
+                        <Button variant="outline-success" size="sm" className="d-flex align-items-center">
+                          <FaEdit />
+                        </Button>
+                      </Link>
+                    </Col>
+                    <Col xs="auto">
+                      <Button
+                        variant="outline-danger"
+                        size="sm"
+                        className="d-flex align-items-center"
+                        onClick={() => handleDelete(product.id)}
+                      >
+                        <FaTrashAlt />
                       </Button>
-                    </Link>
-                  </Col>
-                  <Col xs={6}>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      className="w-100 py-1 px-2"
-                      onClick={() => handleDelete(product.id)}
-                    >
-                      Supprimer
-                    </Button>
-                  </Col>
-                </Row>
-              </td>
+                    </Col>
+                  </Row>
+                </td>
+
             </tr>
           ))}
         </tbody>
@@ -93,3 +104,4 @@ const ManageProducts = () => {
 };
 
 export default ManageProducts;
+
